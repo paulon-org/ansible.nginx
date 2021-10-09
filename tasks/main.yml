@@ -1,0 +1,20 @@
+- name: Deploy letsencrypt hook
+  ansible.builtin.template:
+    src: etc/letsencrypt/hooks/nginx.hook
+    dest: /etc/letsencrypt/hooks/nginx.hook
+    owner: root
+    group: root
+    mode: 0754
+
+- name: Deploy nginx configuration
+  ansible.builtin.template:
+    src: etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-available/default
+  notify: restart nginx
+
+- name: Enable nginx site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+  notify: restart nginx
